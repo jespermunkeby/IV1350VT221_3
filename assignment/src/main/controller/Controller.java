@@ -5,11 +5,18 @@ import model.Register;
 import dto.SaleInfoDTO;
 import dto.PaymentDetailsDTO;
 
+
+/**
+ * Controller class that manages the flow of sales operations, integrating various system components.
+ */
 public class Controller {
     private Integration integration;
     private Sale sale;
     private Register register;
 
+    /**
+     * @param integration Integration Object
+     */
     public Controller(Integration integration){
         this.integration = integration;
         this.register = new Register();
@@ -43,11 +50,10 @@ public class Controller {
     // }
 
     /**
-     * finishes a sale
-     * @param paymentDetails payment details
-     * @return info aout the finished sale
+     * Finalizes the sale and handles payment.
+     * @param paymentDetails Details of the payment made.
      */
-    public SaleInfoDTO finishSale(PaymentDetailsDTO paymentDetails){
+    public void finishSale(PaymentDetailsDTO paymentDetails){
 
         SaleInfoDTO sale = this.sale.finishSale(paymentDetails);
 
@@ -60,7 +66,8 @@ public class Controller {
         this.sale = null;
 
         System.out.println("Sale finished sucessfully");
-        return sale;
+
+        this.register.printReceipt(sale, paymentDetails);
     }
 
     public float getRunningTotal(){

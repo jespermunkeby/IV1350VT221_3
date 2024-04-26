@@ -24,7 +24,7 @@ public class ItemDTO {
     }
 
     public float getTotalPrice(){
-        return (this.percentageVat+1)*this.priceExcludingVat;
+        return (this.percentageVat+1)*this.priceExcludingVat*this.quantity;
     }
 
     public int getItemID(){
@@ -32,7 +32,7 @@ public class ItemDTO {
     }
 
     public float getVat(){
-        return this.percentageVat*this.priceExcludingVat;
+        return this.percentageVat*this.priceExcludingVat*this.quantity;
     }
 
     public int getQuantity(){
