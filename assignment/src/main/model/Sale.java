@@ -2,6 +2,7 @@ package model;
 import dto.ItemDTO;
 import dto.PaymentDetailsDTO;
 import dto.SaleInfoDTO;
+import exceptionHandling.ItemNotFoundException;
 import integration.Integration;
 
 import java.util.HashMap;
@@ -23,27 +24,25 @@ public class Sale {
     }
 
      /**
-     * Attempts to add an item to the sale by its ID and quantity.
-     * 
-     * @param id The ID of the item to be added.
-     * @param quantity The quantity of the item to be added.
-     * @return true if the item is added successfully, false if the item cannot be found.
-     */
-    public boolean addItemByID(int id, int quantity){
+      * Attempts to add an item to the sale by its ID and quantity.
+      *
+      * @param id       The ID of the item to be added.
+      * @param quantity The quantity of the item to be added.
+      * @return true if the item is added successfully, false if the item cannot be found.
+      */
+    public void addItemByID(int id, int quantity) throws ItemNotFoundException{
         ItemDTO item = this.integration.getItemDTOByID(id, quantity);
 
         if (item==null){
-            return false;
+            throw new ItemNotFoundException(id);
         } else if (this.items.containsKey(id)){
             //increase quantity of existing item
             this.items.put(id,
                 new ItemDTO(item, this.items.get(id).getQuantity() + quantity)
             );
-            return true;
         } else{
             //add new item
             this.items.put(id, item);
-            return true;
         }
     }
 

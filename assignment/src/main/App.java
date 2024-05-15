@@ -50,6 +50,8 @@ public class App {
         view.printSaleInfo();
         System.out.println("--------------------------------");
 
+        view.enterID(2223);
+        view.printSaleInfo();
 
         System.out.println("\n\n **END SALE**");
         view.payAndEnd(new PaymentDetailsDTO(controller.getRunningTotal()));

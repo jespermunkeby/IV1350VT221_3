@@ -1,9 +1,14 @@
 package controller;
+import exceptionHandling.ItemNotFoundException;
+import exceptionHandling.NoResponseException;
 import integration.Integration;
+import integration.TotalRevenueFileOutput;
+import model.ErrorLogger;
 import model.Sale;
 import model.Register;
 import dto.SaleInfoDTO;
 import dto.PaymentDetailsDTO;
+import view.TotalRevenueView;
 
 
 /**
@@ -20,6 +25,8 @@ public class Controller {
     public Controller(Integration integration){
         this.integration = integration;
         this.register = new Register();
+        this.register.addObserver(new TotalRevenueView());
+        this.register.addObserver(new TotalRevenueFileOutput());
     }
 
     /**
@@ -35,8 +42,8 @@ public class Controller {
      * @param quantity quantity of item
      * @return sucessfull?
      */
-    public boolean addItemByID(int id, int quantity){
-        return this.sale.addItemByID(id, quantity);
+    public void addItemByID(int id, int quantity) throws ItemNotFoundException{
+        this.sale.addItemByID(id, quantity);
     }
 
     // /**
@@ -45,9 +52,17 @@ public class Controller {
     //  * @param discountID discount id
     //  * @return sucessful?
     //  */
-    // public boolean requestDiscount(int customerID, int discountID){
-
-    // }
+    /*
+    public boolean requestDiscount(int customerID, int discountID) throws NoResponseException {
+        boolean discount = true;
+        try{
+            //call to discountDB and save result in "discount"
+        } catch(NoResponseException ex){
+            throw new NoResponseException("discount database"); //re-throwing to customize message
+            //possibility to write to log
+        }
+        return discount;
+    }*/
 
     /**
      * Finalizes the sale and handles payment.
@@ -62,7 +77,16 @@ public class Controller {
         } 
 
         this.register.depopsitToBalance(paymentDetails.getAmount());
-        this.integration.accountSale(sale);
+
+        try{
+            this.integration.accountSale(sale);
+
+        } catch (NoResponseException ex){
+            System.out.println(ex);
+            ErrorLogger e = new ErrorLogger();
+            e.log(ex);
+        }
+
         this.sale = null;
 
         System.out.println("Sale finished sucessfully");
